@@ -250,7 +250,10 @@ export default function RegisterPage() {
                 size="large"
                 sx={{ mt: 3, mb: 2, py: 1.5 }}
               >
-                {loading ? <CircularProgress size={24} /> : "Sign Up"}
+                Sign Up{" "}
+                {loading ? (
+                  <CircularProgress size={16} className="ml-2 text-white" />
+                ) : null}
               </Button>
 
               <Box sx={{ textAlign: "center", mt: 2 }}>

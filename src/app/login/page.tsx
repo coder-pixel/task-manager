@@ -210,7 +210,10 @@ export default function LoginPage() {
                 disabled={loading}
                 sx={{ mt: 3, mb: 2, py: 1.5 }}
               >
-                {loading ? <CircularProgress size={24} /> : "Sign In"}
+                Sign In{" "}
+                {loading ? (
+                  <CircularProgress size={16} className="ml-2 text-white" />
+                ) : null}
               </Button>
 
               <Box sx={{ textAlign: "center", mt: 2 }}>

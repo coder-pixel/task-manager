@@ -74,7 +74,15 @@ export const useAuthStore = create<AuthState>()(
       // fn to sign out
       signOut: async () => {
         try {
+          // Call logout API to clear cookies
+          await fetch("/api/auth/logout", {
+            method: "POST",
+          });
+
+          // Sign out from Firebase
           await firebaseSignOut(auth);
+
+          // Clear local state
           set({ user: null, token: null });
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {

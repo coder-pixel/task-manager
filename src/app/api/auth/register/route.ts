@@ -21,11 +21,11 @@ export async function POST(request: NextRequest) {
       password
     );
 
-    // Get user token from data
+    // get user token from data
     const token = await userCredential?.user?.getIdToken();
 
-    // Return user data and token
-    return NextResponse.json(
+    // create response with user data and token
+    const response = NextResponse.json(
       {
         user: {
           uid: userCredential?.user?.uid,
@@ -36,11 +36,24 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
+
+    // set httpOnly cookie here, to be later used for authentication in middleware
+    response?.cookies?.set({
+      name: "auth-token",
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: "/",
+    });
+
+    return response;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Registration error:", error);
 
-    // Handle specific Firebase errors
+    // handle specific Firebase errors
     let errorMessage = "Failed to create account";
     if (error.code === "auth/email-already-in-use") {
       errorMessage = "An account with this email already exists";

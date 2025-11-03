@@ -11,17 +11,19 @@ import {
 } from "@mui/material";
 import { useAuthStore } from "@/store/authStore";
 import { capitalizeFirstLetter } from "../helper-methods";
+import { errorToast, successToast } from "../helper-methods/Toaster";
 
 export default function DashboardPage() {
   const { user, signOut } = useAuthStore();
   const router = useRouter();
 
-  const handleSignOut = async () => {
+  const _handleSignOut = async () => {
     try {
       await signOut();
       router.push("/login");
+      successToast("Signed out successfully");
     } catch (error) {
-      console.error("Sign out error:", error);
+      errorToast(error || "Failed to sign out");
     }
   };
 
@@ -43,7 +45,7 @@ export default function DashboardPage() {
                 ? capitalizeFirstLetter(user?.email?.split("@")[0])
                 : "User"}
             </Typography>
-            <Button variant="outlined" color="primary" onClick={handleSignOut}>
+            <Button variant="outlined" color="primary" onClick={_handleSignOut}>
               Sign Out
             </Button>
           </CardContent>
