@@ -41,7 +41,7 @@ export default function LoginPage() {
               Enter your credentials to access your account
             </Typography>
 
-            <Box component="form" onSubmit={handleSubmit} noValidate>
+            <Box component="form" onSubmit={handleSubmit}>
               <TextField
                 fullWidth
                 label="Email"

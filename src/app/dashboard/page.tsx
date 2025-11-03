@@ -10,9 +10,21 @@ import {
 } from "@mui/material";
 import { capitalizeFirstLetter } from "../../helper-methods";
 import useDashboard from "@/hooks/useDashboard";
+import AddProjectModal from "@/Components/Dashboard/AddProjectModal";
 
 export default function DashboardPage() {
-  const { user, handleSignOutAlert } = useDashboard();
+  const {
+    user,
+    openProjectDialog,
+    projectForm,
+    loading,
+    errors,
+    handleSignOutAlert,
+    toggleAddProjectDialog,
+    handleProjectFormChange,
+    handleCreateProject,
+  } = useDashboard();
+
   if (!user) {
     return null;
   }
@@ -20,6 +32,16 @@ export default function DashboardPage() {
   return (
     <Container maxWidth="lg">
       <Box sx={{ py: 8 }}>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => toggleAddProjectDialog(true, null)}
+          >
+            Add New Project
+          </Button>
+        </Box>
+
         <Card>
           <CardContent sx={{ p: 4 }}>
             <Typography variant="h4" component="h1" gutterBottom>
@@ -41,6 +63,16 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </Box>
+
+      <AddProjectModal
+        isOpen={openProjectDialog?.isOpen}
+        projectForm={projectForm}
+        errors={errors}
+        loading={loading}
+        toggleAddProjectDialog={toggleAddProjectDialog}
+        handleProjectFormChange={handleProjectFormChange}
+        handleCreateProject={(e) => handleCreateProject(e)}
+      />
     </Container>
   );
 }
