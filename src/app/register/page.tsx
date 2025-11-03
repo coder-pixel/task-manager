@@ -122,18 +122,31 @@ export default function RegisterPage() {
     });
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const _markAllIsDirty = async (): Promise<IsDirty> => {
+    return new Promise((resolve) => {
+      Object.keys(isDirty)?.forEach((key: string) => {
+        isDirty[key as keyof IsDirty] = true;
+      });
+
+      setIsDirty(isDirty);
+      resolve(isDirty);
+    });
+  };
+
+  const _handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     try {
       if (e) e.preventDefault();
       setLoading(true);
 
       const newFormFields = { ...formFields };
-      const newIsDirty = { ...isDirty };
+      const newIsDirty = await _markAllIsDirty();
 
       const isFormValid = await _validateFormFields({
         newFormFields,
         newIsDirty,
       });
+
+      console.log({ isFormValid });
 
       // return if form not valid
       if (!isFormValid) return;
@@ -175,7 +188,7 @@ export default function RegisterPage() {
               Sign up to get started
             </Typography>
 
-            <Box component="form" onSubmit={handleSubmit} noValidate>
+            <Box component="form" onSubmit={_handleSubmit} noValidate>
               <TextField
                 fullWidth
                 label="Email"
@@ -249,6 +262,7 @@ export default function RegisterPage() {
                 variant="contained"
                 size="large"
                 sx={{ mt: 3, mb: 2, py: 1.5 }}
+                disabled={loading}
               >
                 Sign Up{" "}
                 {loading ? (

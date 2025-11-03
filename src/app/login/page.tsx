@@ -102,13 +102,24 @@ export default function LoginPage() {
     });
   };
 
+  const _markAllIsDirty = async (): Promise<IsDirty> => {
+    return new Promise((resolve) => {
+      Object.keys(isDirty)?.forEach((key: string) => {
+        isDirty[key as keyof IsDirty] = true;
+      });
+
+      setIsDirty(isDirty);
+      resolve(isDirty);
+    });
+  };
+
   const _handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       if (e) e.preventDefault();
       setLoading(true);
 
       const newFormFields = { ...formFields };
-      const newIsDirty = { ...isDirty };
+      const newIsDirty = await _markAllIsDirty();
 
       const isFormValid = await _validateFormFields({
         newFormFields,
