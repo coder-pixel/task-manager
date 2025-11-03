@@ -13,8 +13,8 @@ import {
   Link,
   CircularProgress,
 } from "@mui/material";
-import { REGEX_CONFIG } from "../Config/RegexConfig";
-import { errorToast, successToast } from "../helper-methods/Toaster";
+import { REGEX_CONFIG } from "../../Config/RegexConfig";
+import { errorToast, successToast } from "../../helper-methods/Toaster";
 import { useAuthStore } from "@/store/authStore";
 
 const initialFormFields = {

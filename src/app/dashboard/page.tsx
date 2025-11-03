@@ -9,9 +9,8 @@ import {
   Typography,
   Button,
 } from "@mui/material";
-import { useAuthStore } from "@/store/authStore";
-import { capitalizeFirstLetter } from "../helper-methods";
-import { errorToast, successToast } from "../helper-methods/Toaster";
+import { capitalizeFirstLetter } from "../../helper-methods";
+import useDashboard from "@/hooks/useDashboard";
 
 export default function DashboardPage() {
   const { user, signOut } = useAuthStore();
