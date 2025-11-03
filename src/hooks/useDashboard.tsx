@@ -1,7 +1,8 @@
 import { errorToast, successToast } from "@/helper-methods/Toaster";
 import { useAuthStore } from "@/store/authStore";
+import { useProjectStore } from "@/store/projectStore";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 
 const initialFormFields = {
@@ -23,6 +24,8 @@ type IsDirty = typeof initialIsDirty;
 
 const useDashboard = () => {
   const { user, signOut } = useAuthStore();
+  const { projects, fetchProjects, addProject, clearProjects } =
+    useProjectStore();
   const router = useRouter();
 
   const [projectForm, setProjectForm] = useState<FormFields>(initialFormFields);
@@ -35,6 +38,22 @@ const useDashboard = () => {
     isOpen: false,
     data: null,
   });
+
+  // Fetch projects on mount
+  useEffect(() => {
+    if (user) {
+      _fetchProjects();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  const _fetchProjects = async () => {
+    try {
+      await fetchProjects();
+    } catch (error) {
+      errorToast(error || "Failed to fetch projects");
+    }
+  };
 
   const _toggleAddProjectDialog = (isOpen: boolean, data: null) => {
     setOpenProjectDialog({
@@ -132,8 +151,8 @@ const useDashboard = () => {
 
       if (!isFormValid) return;
 
-      // create project via API route
-      // await createProject(projectForm);
+      // Create project
+      await addProject(projectForm.projectName, projectForm.description);
 
       successToast("Project created successfully");
       _resetFormFields();
@@ -164,6 +183,7 @@ const useDashboard = () => {
   const _handleSignOut = async () => {
     try {
       await signOut();
+      clearProjects(); // Clear projects from state on logout
       successToast("Signed out successfully");
       router.push("/login");
     } catch (error) {
@@ -172,12 +192,13 @@ const useDashboard = () => {
   };
 
   return {
-    handleSignOutAlert: _handleSignOutAlert,
     user,
+    projects,
     openProjectDialog,
     projectForm,
     loading,
     errors,
+    handleSignOutAlert: _handleSignOutAlert,
     toggleAddProjectDialog: _toggleAddProjectDialog,
     handleProjectFormChange: _handleOnChange,
     handleCreateProject: _handleSubmit,

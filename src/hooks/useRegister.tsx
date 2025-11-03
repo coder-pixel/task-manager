@@ -1,7 +1,7 @@
 import { REGEX_CONFIG } from "@/Config/RegexConfig";
 import { errorToast, successToast } from "@/helper-methods/Toaster";
 import { useAuthStore } from "@/store/authStore";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 const initialFormFields = {
