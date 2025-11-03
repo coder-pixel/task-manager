@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { REGEX_CONFIG } from "../Config/RegexConfig";
 import { errorToast, successToast } from "../helper-methods/Toaster";
+import { useAuthStore } from "@/store/authStore";
 
 const initialFormFields = {
   email: "",
@@ -38,6 +39,7 @@ type Errors = typeof initialErrors;
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { signUp } = useAuthStore();
 
   const [formFields, setFormFields] = useState<FormFields>(initialFormFields);
   const [isDirty, setIsDirty] = useState<IsDirty>(initialIsDirty);
@@ -136,10 +138,10 @@ export default function RegisterPage() {
       // return if form not valid
       if (!isFormValid) return;
 
-      // sign up api call: TODO
+      // sign up via API route
+      await signUp(formFields.email, formFields.password);
 
       successToast("Registered Successfully");
-
       // redirect to dashboard
       router.push("/dashboard");
     } catch (err) {
