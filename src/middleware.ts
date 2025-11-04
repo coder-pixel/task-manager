@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 
 // Define protected and auth routes
 const protectedRoutes = ["/dashboard"];
-const authRoutes = ["/login", "/register"];
+const authRoutes = ["/", "/login", "/register"];
 
 // middleware function to protect routes
 export function middleware(request: NextRequest) {
@@ -24,7 +24,9 @@ export function middleware(request: NextRequest) {
   }
 
   // if not protected route, then check whether the current route is an auth route (login/register)
-  const isAuthRoute = authRoutes?.some((route) => pathname?.startsWith(route));
+  const isAuthRoute =
+    pathname === "/" ||
+    authRoutes?.some((route) => route !== "/" && pathname?.startsWith(route));
 
   // redirect to dashboard page
   if (isAuthRoute && isAuthenticated) {
