@@ -23,6 +23,7 @@ export default function LoginPage() {
     useLogin();
 
   const [loadingTransition, startTransition] = useTransition();
+  const [loadingBackPageTransition, startBackPageTransition] = useTransition();
 
   return (
     <Container maxWidth="sm">
@@ -31,13 +32,18 @@ export default function LoginPage() {
           <CardContent sx={{ p: 4 }}>
             <Box sx={{ mb: 2 }}>
               <IconButton
-                onClick={() => router.push("/")}
+                onClick={() => startBackPageTransition(() => router.push("/"))}
                 size="small"
                 sx={{ color: "text.secondary" }}
                 aria-label="back to home"
                 title="Back to home"
+                disabled={loadingBackPageTransition}
               >
-                <ArrowBackIcon />
+                {loadingBackPageTransition ? (
+                  <CircularProgress size={16} />
+                ) : (
+                  <ArrowBackIcon />
+                )}
               </IconButton>
             </Box>
 
