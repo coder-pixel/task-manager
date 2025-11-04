@@ -12,7 +12,6 @@ import {
   MenuItem,
   Select,
   IconButton,
-  Chip,
   Grid,
   Paper,
 } from "@mui/material";
@@ -23,18 +22,18 @@ import AddTaskModal from "@/Components/Project/AddTaskModal";
 import { TASK_STATUSES } from "@/Config";
 import { Task, TaskStatusEnum } from "@/store/projectStore";
 
-const _getStatusColor = (status: TaskStatusEnum) => {
-  switch (status) {
-    case TaskStatusEnum.TODO:
-      return "default";
-    case TaskStatusEnum.IN_PROGRESS:
-      return "primary";
-    case TaskStatusEnum.DONE:
-      return "success";
-    default:
-      return "default";
-  }
-};
+// const _getStatusColor = (status: TaskStatusEnum) => {
+//   switch (status) {
+//     case TaskStatusEnum.TODO:
+//       return "default";
+//     case TaskStatusEnum.IN_PROGRESS:
+//       return "primary";
+//     case TaskStatusEnum.DONE:
+//       return "success";
+//     default:
+//       return "default";
+//   }
+// };
 
 const ProjectPage = () => {
   const params = useParams();
@@ -66,6 +65,7 @@ const ProjectPage = () => {
             justifyContent: "center",
             alignItems: "center",
             minHeight: "70vh",
+            px: { xs: 2, sm: 0 },
           }}
         >
           <CircularProgress />
@@ -77,16 +77,25 @@ const ProjectPage = () => {
   if (!project && !loading?.fetchLoading) {
     return (
       <Container maxWidth="lg">
-        <Box sx={{ py: 8 }}>
+        <Box sx={{ py: { xs: 4, sm: 6, md: 8 }, px: { xs: 2, sm: 0 } }}>
           <Card>
-            <CardContent sx={{ p: 4, textAlign: "center" }}>
-              <Typography variant="h6" color="error" gutterBottom>
+            <CardContent sx={{ p: { xs: 3, sm: 4 }, textAlign: "center" }}>
+              <Typography
+                variant="h6"
+                color="error"
+                gutterBottom
+                sx={{ fontSize: { xs: "1rem", sm: "1.25rem" } }}
+              >
                 Project not found
               </Typography>
               <Button
                 variant="contained"
                 onClick={() => router.push("/dashboard")}
-                sx={{ mt: 2 }}
+                sx={{
+                  mt: 2,
+                  width: { xs: "100%", sm: "auto" },
+                  minWidth: { sm: "200px" },
+                }}
               >
                 Back to Dashboard
               </Button>
@@ -113,9 +122,9 @@ const ProjectPage = () => {
 
   return (
     <Container maxWidth="lg">
-      <Box sx={{ py: 4 }}>
+      <Box sx={{ py: { xs: 2, sm: 3, md: 4 }, px: { xs: 2, sm: 0 } }}>
         {/* Header */}
-        <Box sx={{ mb: 4 }}>
+        <Box sx={{ mb: { xs: 3, sm: 4 } }}>
           <Button
             startIcon={
               loadingTransition ? <CircularProgress size={20} /> : <ArrowBack />
@@ -129,32 +138,62 @@ const ProjectPage = () => {
           <Box
             sx={{
               display: "flex",
+              flexDirection: { xs: "column", md: "row" },
               justifyContent: "space-between",
-              alignItems: "center",
+              alignItems: { xs: "flex-start", md: "center" },
+              gap: { xs: 2, md: 0 },
             }}
           >
-            <Box>
-              <Box className="flex items-baseline justify-between">
-                <Typography variant="h4" component="h1" gutterBottom>
+            <Box sx={{ width: "100%" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: { xs: "column", sm: "row" },
+                  alignItems: { xs: "flex-start", sm: "baseline" },
+                  justifyContent: "space-between",
+                  gap: { xs: 2, sm: 0 },
+                  mb: { xs: 2, sm: 0 },
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  component="h1"
+                  gutterBottom
+                  sx={{
+                    fontSize: { xs: "1.5rem", sm: "2rem", md: "2.125rem" },
+                  }}
+                >
                   {project?.projectName || "N/A"}
                 </Typography>
 
                 <Button
                   variant="contained"
                   color="primary"
-                  className="w-[200px]"
                   startIcon={<Add />}
                   onClick={() => toggleAddTaskDialog(true, null)}
                   disabled={loading?.submitLoading}
+                  sx={{
+                    width: { xs: "100%", sm: "auto" },
+                    minWidth: { sm: "150px" },
+                  }}
                 >
                   Add Task
                 </Button>
               </Box>
 
-              <Typography variant="body1" color="text.secondary" gutterBottom>
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                gutterBottom
+                sx={{ fontSize: { xs: "0.875rem", sm: "1rem" } }}
+              >
                 {project?.description || "N/A"}
               </Typography>
-              <Typography variant="caption" color="text.secondary">
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+              >
                 Created:{" "}
                 {project?.createdAt
                   ? new Date(project?.createdAt).toLocaleDateString()
@@ -165,33 +204,96 @@ const ProjectPage = () => {
         </Box>
 
         {/* Task Statistics */}
-        <Grid container spacing={2} sx={{ mb: 4 }}>
+        <Grid
+          container
+          spacing={{ xs: 1.5, sm: 2 }}
+          sx={{ mb: { xs: 3, sm: 4 } }}
+        >
           <Grid item xs={12} sm={4}>
-            <Paper sx={{ p: 2, textAlign: "center" }}>
-              <Typography variant="h4" color="text.secondary">
+            <Paper
+              sx={{
+                p: { xs: 1.5, sm: 2 },
+                textAlign: "center",
+                bgcolor: "grey.800",
+                color: "primary.contrastText",
+              }}
+            >
+              <Typography
+                variant="h4"
+                color="inherit"
+                sx={{ fontSize: { xs: "1.75rem", sm: "2.125rem" } }}
+              >
                 {tasksByStatus[TaskStatusEnum.TODO]?.length || 0}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography
+                variant="body2"
+                color="primary.contrastText"
+                sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+              >
                 To Do
               </Typography>
             </Paper>
           </Grid>
+
           <Grid item xs={12} sm={4}>
-            <Paper sx={{ p: 2, textAlign: "center" }}>
-              <Typography variant="h4" color="primary">
+            <Paper
+              sx={{
+                p: { xs: 1.5, sm: 2 },
+                textAlign: "center",
+                bgcolor: "primary.light",
+                color: "primary.contrastText",
+              }}
+            >
+              <Typography
+                variant="h4"
+                color="inherit"
+                sx={{
+                  fontSize: { xs: "1.75rem", sm: "2.125rem" },
+                  color: "inherit",
+                }}
+              >
                 {tasksByStatus[TaskStatusEnum.IN_PROGRESS]?.length || 0}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography
+                variant="body2"
+                color="inherit"
+                sx={{
+                  fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                  color: "inherit",
+                }}
+              >
                 In Progress
               </Typography>
             </Paper>
           </Grid>
+
           <Grid item xs={12} sm={4}>
-            <Paper sx={{ p: 2, textAlign: "center" }}>
-              <Typography variant="h4" color="success.main">
+            <Paper
+              sx={{
+                p: { xs: 1.5, sm: 2 },
+                textAlign: "center",
+                bgcolor: "success.light",
+                color: "success.contrastText",
+              }}
+            >
+              <Typography
+                variant="h4"
+                color="inherit"
+                sx={{
+                  fontSize: { xs: "1.75rem", sm: "2.125rem" },
+                  color: "inherit",
+                }}
+              >
                 {tasksByStatus[TaskStatusEnum.DONE]?.length || 0}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography
+                variant="body2"
+                color="inherit"
+                sx={{
+                  fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                  color: "inherit",
+                }}
+              >
                 Done
               </Typography>
             </Paper>
@@ -199,15 +301,20 @@ const ProjectPage = () => {
         </Grid>
 
         {/* Tasks List */}
-        <Typography variant="h5" component="h2" sx={{ mb: 3 }}>
+        <Typography
+          variant="h5"
+          component="h2"
+          className="mb-2 sm:mb-3 text-lg sm:text-xl"
+        >
           Tasks
         </Typography>
 
         {project?.tasks && project?.tasks?.length > 0 ? (
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Box className="flex gap-2 flex-wrap">
             {project?.tasks?.map((task) => (
               <Card
-                key={task.id}
+                key={task?.id}
+                className="mx-auto mb-2"
                 sx={{
                   transition: "box-shadow 0.2s",
                   "&:hover": {
@@ -215,55 +322,54 @@ const ProjectPage = () => {
                   },
                 }}
               >
-                <CardContent>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
-                      gap: 2,
-                    }}
+                <CardContent className="md:w-[350px] w-[300px] flex flex-col justify-between items-start h-full">
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    className="text-lg font-bold w-full mb-2 text-wrap"
                   >
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="h6" gutterBottom>
-                        {task?.title || "N/A"}
-                      </Typography>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 2,
-                          flexWrap: "wrap",
-                        }}
-                      >
-                        <Chip
-                          label={task?.status || "N/A"}
-                          color={_getStatusColor(task?.status)}
-                          size="small"
-                        />
-                        {task?.dueDate && (
-                          <Typography variant="caption" color="text.secondary">
-                            Due:{" "}
-                            {task?.dueDate
-                              ? new Date(task?.dueDate).toLocaleDateString()
-                              : "N/A"}
-                          </Typography>
-                        )}
-                        <Typography variant="caption" color="text.secondary">
-                          Created:{" "}
-                          {task?.createdAt
-                            ? new Date(task?.createdAt).toLocaleDateString()
-                            : "N/A"}
-                        </Typography>
-                      </Box>
-                    </Box>
+                    {task?.title || "N/A"}
+                  </Typography>
+
+                  <Box className="flex flex-col justify-between items-start gap-2 w-full">
                     <Box
+                      className="w-full"
                       sx={{
                         display: "flex",
-                        alignItems: "center",
-                        gap: 1,
+                        flexDirection: { xs: "column", sm: "row" },
+                        justifyContent: "space-between",
+                        alignItems: { xs: "flex-start", sm: "center" },
+                        flexWrap: "wrap",
+                        gap: { xs: 0.5, sm: 0 },
+                        mb: 1,
                       }}
                     >
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ mr: { sm: 2 }, mb: { xs: 0.5, sm: 0 } }}
+                      >
+                        Created:{" "}
+                        {task?.createdAt
+                          ? new Date(task?.createdAt).toLocaleDateString()
+                          : "N/A"}
+                      </Typography>
+
+                      {task?.dueDate && (
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ ml: { sm: 2 }, mb: { xs: 0.5, sm: 0 } }}
+                        >
+                          Due:{" "}
+                          {task?.dueDate
+                            ? new Date(task?.dueDate).toLocaleDateString()
+                            : "N/A"}
+                        </Typography>
+                      )}
+                    </Box>
+
+                    <Box className="flex justify-between items-start w-full">
                       <>
                         <Select
                           value={task?.status || "N/A"}
@@ -273,9 +379,11 @@ const ProjectPage = () => {
                               e.target.value
                             )
                           }
+                          title="Update Task Status"
                           size="small"
                           disabled={!!loading?.statusUpdateLoading}
                           sx={{ minWidth: 140 }}
+                          color="primary"
                         >
                           {TASK_STATUSES?.map((status) => (
                             <MenuItem key={status} value={status}>
@@ -288,20 +396,25 @@ const ProjectPage = () => {
                         ) : null}
                       </>
 
-                      <IconButton
-                        color="primary"
-                        onClick={() => toggleAddTaskDialog(true, task)}
-                        disabled={loading?.submitLoading || !task?.id}
-                      >
-                        <Edit />
-                      </IconButton>
-                      <IconButton
-                        color="error"
-                        onClick={() => handleDeleteTaskAlert(task?.id || "")}
-                        disabled={loading?.deleteLoading || !task?.id}
-                      >
-                        <Delete />
-                      </IconButton>
+                      <div>
+                        <IconButton
+                          color="primary"
+                          onClick={() => toggleAddTaskDialog(true, task)}
+                          disabled={loading?.submitLoading || !task?.id}
+                          title="Edit Task"
+                        >
+                          <Edit />
+                        </IconButton>
+
+                        <IconButton
+                          color="error"
+                          onClick={() => handleDeleteTaskAlert(task?.id || "")}
+                          disabled={loading?.deleteLoading || !task?.id}
+                          title="Delete Task"
+                        >
+                          <Delete />
+                        </IconButton>
+                      </div>
                     </Box>
                   </Box>
                 </CardContent>
@@ -310,8 +423,12 @@ const ProjectPage = () => {
           </Box>
         ) : (
           <Card>
-            <CardContent sx={{ p: 4, textAlign: "center" }}>
-              <Typography variant="body1" color="text.secondary">
+            <CardContent sx={{ p: { xs: 3, sm: 4 }, textAlign: "center" }}>
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                sx={{ fontSize: { xs: "0.875rem", sm: "1rem" } }}
+              >
                 No tasks yet. Create your first task to get started!
               </Typography>
               <Button
@@ -319,7 +436,11 @@ const ProjectPage = () => {
                 color="primary"
                 startIcon={<Add />}
                 onClick={() => toggleAddTaskDialog(true, null)}
-                sx={{ mt: 2 }}
+                sx={{
+                  mt: 2,
+                  width: { xs: "100%", sm: "auto" },
+                  minWidth: { sm: "150px" },
+                }}
               >
                 Add Task
               </Button>

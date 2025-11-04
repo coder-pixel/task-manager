@@ -40,30 +40,43 @@ export default function DashboardPage() {
 
   return (
     <Container maxWidth="lg">
-      <Box sx={{ py: 8 }}>
+      <Box sx={{ py: { xs: 4, sm: 8 } }}>
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            flexDirection: { xs: "column", sm: "row" },
+            justifyContent: { xs: "flex-start", sm: "space-between" },
+            alignItems: { xs: "flex-start", sm: "center" },
             mb: 4,
+            gap: { xs: 2, sm: 0 },
           }}
         >
-          <Typography variant="h4" component="h1">
+          <Typography variant="h4" component="h1" sx={{ mb: { xs: 1, sm: 0 } }}>
             Dashboard
           </Typography>
-          <Box sx={{ display: "flex", gap: 2 }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              flexDirection: { xs: "column", sm: "row" },
+              width: { xs: "100%", sm: "auto" },
+            }}
+          >
             <Button
+              fullWidth={true}
               variant="contained"
               color="primary"
               onClick={() => toggleAddProjectDialog(true, null)}
+              className="whitespace-nowrap"
             >
-              Add New Project
+              Add Project
             </Button>
             <Button
+              fullWidth={true}
               variant="outlined"
               color="primary"
               onClick={handleSignOutAlert}
+              className="whitespace-nowrap"
             >
               Sign Out
             </Button>
@@ -71,7 +84,7 @@ export default function DashboardPage() {
         </Box>
 
         <Card sx={{ mb: 4 }}>
-          <CardContent sx={{ p: 4 }}>
+          <CardContent sx={{ p: { xs: 2, sm: 4 } }}>
             <Typography variant="body1" color="text.secondary">
               Welcome,{" "}
               {user?.email
@@ -86,7 +99,7 @@ export default function DashboardPage() {
         </Typography>
 
         {projects && projects?.length > 0 ? (
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 2, sm: 3 }}>
             {projects?.map((project) => (
               <Grid item xs={12} sm={6} md={4} key={project?.id}>
                 <Card
@@ -99,20 +112,60 @@ export default function DashboardPage() {
                       boxShadow: 8,
                       transform: "translateY(-4px) scale(1.03)",
                     },
+                    display: "flex",
+                    flexDirection: "column",
                   }}
-                  // onClick={() => router.push(`/project/${project?.id}`)}
                 >
                   <CardContent
                     title="Click to view project tasks"
                     className="flex flex-col justify-between h-full"
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      height: "100%",
+                      p: { xs: 2, sm: 3 },
+                    }}
                   >
-                    <Box className="flex flex-col justify-start h-full">
-                      <Box className="flex items-baseline justify-between">
-                        <Typography variant="h6" component="h3" gutterBottom>
+                    <Box
+                      className="flex flex-col justify-start h-full"
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        flex: 1,
+                      }}
+                    >
+                      <Box
+                        className="flex items-baseline justify-between"
+                        sx={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "baseline",
+                          justifyContent: "space-between",
+                          gap: 1,
+                        }}
+                      >
+                        <Typography
+                          variant="h6"
+                          component="h3"
+                          gutterBottom
+                          sx={{
+                            fontSize: { xs: "1rem", sm: "1.25rem" },
+                            flexShrink: 1,
+                            minWidth: 0,
+                            textOverflow: "ellipsis",
+                            overflow: "hidden",
+                            whiteSpace: "nowrap",
+                            mr: 1,
+                          }}
+                        >
                           {project?.projectName || "N/A"}
                         </Typography>
 
-                        <Typography variant="caption" color="text.secondary">
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ whiteSpace: "nowrap" }}
+                        >
                           Total Tasks: {project?.totalTasks || 0}
                         </Typography>
                       </Box>
@@ -120,7 +173,11 @@ export default function DashboardPage() {
                       <Typography
                         variant="body2"
                         color="text.secondary"
-                        sx={{ mb: 2 }}
+                        sx={{
+                          mb: 2,
+                          wordBreak: "break-word",
+                          fontSize: { xs: "0.95rem", sm: "1rem" },
+                        }}
                       >
                         {project?.description || "N/A"}
                       </Typography>
@@ -129,11 +186,18 @@ export default function DashboardPage() {
                     <Box
                       sx={{
                         display: "flex",
-                        justifyContent: "space-between ",
-                        alignItems: "baseline",
+                        flexDirection: { xs: "column", sm: "row" },
+                        justifyContent: "space-between",
                       }}
                     >
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{
+                          mb: { xs: 1, sm: 0 },
+                          whiteSpace: "nowrap",
+                        }}
+                      >
                         Created:{" "}
                         {new Date(project?.createdAt)?.toLocaleDateString()}
                       </Typography>
@@ -162,7 +226,7 @@ export default function DashboardPage() {
           </Grid>
         ) : (
           <Card>
-            <CardContent sx={{ p: 4, textAlign: "center" }}>
+            <CardContent sx={{ p: { xs: 2, sm: 4 }, textAlign: "center" }}>
               <Typography variant="body1" color="text.secondary">
                 No projects yet. Create your first project to get started!
               </Typography>

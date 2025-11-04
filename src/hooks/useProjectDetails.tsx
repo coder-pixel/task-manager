@@ -163,6 +163,10 @@ const useProjectDetails = (projectId: string) => {
               if (!newFormFields?.[key]?.trim()?.length) {
                 newErrors.title = "*Task title is required";
                 isFormValid = false;
+              } else if (newFormFields?.[key]?.trim()?.length > 100) {
+                newErrors.title =
+                  "*Task title must be less than 100 characters";
+                isFormValid = false;
               } else {
                 newErrors.title = null;
                 newIsDirty[key] = false;

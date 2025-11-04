@@ -10,10 +10,12 @@ import {
   Box,
   Typography,
   CircularProgress,
+  IconButton,
 } from "@mui/material";
 import { FormFields, Errors } from "@/hooks/useProjectDetails";
 import { Task, TaskStatusEnum } from "@/store/projectStore";
 import { TASK_STATUSES } from "@/Config";
+import { Close } from "@mui/icons-material";
 
 interface AddTaskModalProps {
   isOpen: boolean;
@@ -44,7 +46,15 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
       fullWidth
     >
       <form onSubmit={handleAddUpdateTask}>
-        <DialogTitle>{data?.title ? "Edit Task" : "Add New Task"}</DialogTitle>
+        <DialogTitle className="flex items-center justify-between">
+          {data?.title ? "Edit Task" : "Add New Task"}
+
+          <IconButton
+            onClick={() => !loading && toggleAddTaskDialog(false, null)}
+          >
+            <Close />
+          </IconButton>
+        </DialogTitle>
         <DialogContent>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
             <Box>
