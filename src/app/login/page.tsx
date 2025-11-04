@@ -10,18 +10,38 @@ import {
   Typography,
   Link,
   CircularProgress,
+  IconButton,
 } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import useLogin from "@/hooks/useLogin";
+import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
+
   const { formFields, errors, loading, handleOnChange, handleSubmit } =
     useLogin();
+
+  const [loadingTransition, startTransition] = useTransition();
 
   return (
     <Container maxWidth="sm">
       <Box className="min-h-screen flex items-center justify-center py-4">
         <Card sx={{ width: "100%", boxShadow: 3 }}>
           <CardContent sx={{ p: 4 }}>
+            <Box sx={{ mb: 2 }}>
+              <IconButton
+                onClick={() => router.push("/")}
+                size="small"
+                sx={{ color: "text.secondary" }}
+                aria-label="back to home"
+                title="Back to home"
+              >
+                <ArrowBackIcon />
+              </IconButton>
+            </Box>
+
             <Typography
               variant="h4"
               component="h1"
@@ -45,12 +65,10 @@ export default function LoginPage() {
               <TextField
                 fullWidth
                 label="Email"
-                type="email"
+                type="text"
                 value={formFields?.email}
                 onChange={(e) => handleOnChange("email", e.target.value)}
                 margin="normal"
-                required
-                autoComplete="email"
                 autoFocus
                 disabled={loading}
               />
@@ -72,7 +90,6 @@ export default function LoginPage() {
                 value={formFields?.password}
                 onChange={(e) => handleOnChange("password", e.target.value)}
                 margin="normal"
-                required
                 autoComplete="current-password"
                 disabled={loading}
               />
@@ -104,13 +121,22 @@ export default function LoginPage() {
               <Box sx={{ textAlign: "center", mt: 2 }}>
                 <Typography variant="body2" color="text.secondary">
                   Don&apos;t have an account?{" "}
-                  <Link
-                    href="/register"
-                    underline="hover"
-                    sx={{ cursor: "pointer", fontWeight: "medium" }}
+                  <Button
+                    variant="text"
+                    size="small"
+                    onClick={() =>
+                      startTransition(() => {
+                        router.push("/register");
+                      })
+                    }
+                    disabled={loadingTransition}
+                    className="font-medium cursor-pointer text-primary"
                   >
-                    Sign up
-                  </Link>
+                    Sign up{" "}
+                    {loadingTransition ? (
+                      <CircularProgress size={16} className="ml-2 text-white" />
+                    ) : null}
+                  </Button>
                 </Typography>
               </Box>
             </Box>

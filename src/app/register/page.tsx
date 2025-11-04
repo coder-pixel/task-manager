@@ -10,18 +10,38 @@ import {
   Typography,
   Link,
   CircularProgress,
+  IconButton,
 } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import useRegister from "@/hooks/useRegister";
+import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
+  const router = useRouter();
+
   const { formFields, errors, loading, handleOnChange, handleSubmit } =
     useRegister();
+
+  const [loadingTransition, startTransition] = useTransition();
 
   return (
     <Container maxWidth="sm">
       <Box className="min-h-screen flex items-center justify-center py-4">
         <Card sx={{ width: "100%", boxShadow: 3 }}>
           <CardContent sx={{ p: 4 }}>
+            <Box sx={{ mb: 2 }}>
+              <IconButton
+                onClick={() => router.push("/")}
+                size="small"
+                sx={{ color: "text.secondary" }}
+                aria-label="back to home"
+                title="Back to home"
+              >
+                <ArrowBackIcon />
+              </IconButton>
+            </Box>
+
             <Typography
               variant="h4"
               component="h1"
@@ -45,11 +65,10 @@ export default function RegisterPage() {
               <TextField
                 fullWidth
                 label="Email"
-                type="email"
+                type="text"
                 value={formFields?.email}
                 onChange={(e) => handleOnChange("email", e.target.value)}
                 margin="normal"
-                required
                 autoComplete="email"
                 autoFocus
               />
@@ -71,7 +90,6 @@ export default function RegisterPage() {
                 value={formFields?.password}
                 onChange={(e) => handleOnChange("password", e.target.value)}
                 margin="normal"
-                required
                 autoComplete="new-password"
                 // helperText="Must be at least 6 characters"
               />
@@ -95,7 +113,6 @@ export default function RegisterPage() {
                   handleOnChange("confirmPassword", e.target.value)
                 }
                 margin="normal"
-                required
                 autoComplete="new-password"
               />
               {errors?.confirmPassword && (
@@ -126,13 +143,22 @@ export default function RegisterPage() {
               <Box sx={{ textAlign: "center", mt: 2 }}>
                 <Typography variant="body2" color="text.secondary">
                   Already have an account?{" "}
-                  <Link
-                    href="/login"
-                    underline="hover"
-                    sx={{ cursor: "pointer", fontWeight: "medium" }}
+                  <Button
+                    variant="text"
+                    size="small"
+                    onClick={() =>
+                      startTransition(() => {
+                        router.push("/login");
+                      })
+                    }
+                    disabled={loadingTransition}
+                    className="font-medium cursor-pointer text-primary"
                   >
                     Sign in
-                  </Link>
+                    {loadingTransition ? (
+                      <CircularProgress size={16} className="ml-2 text-white" />
+                    ) : null}
+                  </Button>
                 </Typography>
               </Box>
             </Box>
