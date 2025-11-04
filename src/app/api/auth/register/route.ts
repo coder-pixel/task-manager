@@ -14,17 +14,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // create a new user in Firebase db
+    // create a new user in firebase db
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
       password
     );
 
-    // get user token from data
+    // get user token
     const token = await userCredential?.user?.getIdToken();
 
-    // create response with user data and token
+    // create response
     const response = NextResponse.json(
       {
         user: {

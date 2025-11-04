@@ -9,10 +9,10 @@ import {
   orderBy,
 } from "firebase/firestore";
 
-// GET - Fetch all projects for the authenticated user
+// GET - Fetch all projects
 export async function GET(request: NextRequest) {
   try {
-    // Get the user from cookies or headers
+    // get user id
     const authHeader = request?.headers?.get("authorization");
     const userId = authHeader?.split("Bearer ")[1];
 
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Fetch projects from Firestore
+    // fetch projects from firestore (db)
     const projectsRef = collection(db, "projects");
     const q = query(
       projectsRef,
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
       return {
         id: doc?.id,
         ...data,
-        tasks: data?.tasks || [], // Ensure tasks array is always present
+        tasks: data?.tasks || [], // ensure tasks array is always present
         totalTasks: data?.tasks?.length || 0,
       };
     });
@@ -51,12 +51,12 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Create a new project
+// POST - Create project
 export async function POST(request: NextRequest) {
   try {
     const { projectName, description } = await request.json();
 
-    // Validate input for required fields
+    // validate input for required fields
     if (!projectName || !description) {
       return NextResponse.json(
         { error: "Project name and description are required" },
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get the user data from cookies or headers
+    // get user data
     const authHeader = request?.headers?.get("authorization");
     const userId = authHeader?.split("Bearer ")[1];
 
@@ -75,13 +75,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create project in Firestore
+    // create project in firestore (db)
     const projectsRef = collection(db, "projects");
     const newProject = {
       projectName: projectName?.trim(),
       description: description?.trim(),
       userId,
-      tasks: [], // Initialize empty tasks array
+      tasks: [], // initialize empty tasks array
       createdAt: new Date().toISOString(),
     };
 

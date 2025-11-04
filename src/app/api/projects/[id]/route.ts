@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
-// GET - Fetch a single project by ID
+// GET - Fetch a project by id
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -10,7 +10,7 @@ export async function GET(
   try {
     const projectId = params?.id;
 
-    // Get user ID from auth header
+    // get user id
     const authHeader = request?.headers?.get("authorization");
     const userId = authHeader?.split("Bearer ")[1];
 
@@ -21,7 +21,7 @@ export async function GET(
       );
     }
 
-    // Get the project from Firestore
+    // get the project
     const projectRef = doc(db, "projects", projectId);
     const projectSnap = await getDoc(projectRef);
 
@@ -31,7 +31,7 @@ export async function GET(
 
     const projectData = projectSnap?.data();
 
-    // Verify ownership
+    // verify ownership
     if (projectData?.userId !== userId) {
       return NextResponse.json(
         { error: "Unauthorized - You don't own this project" },

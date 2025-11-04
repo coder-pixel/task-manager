@@ -21,10 +21,10 @@ export async function POST(request: NextRequest) {
       password
     );
 
-    // get user token from data
+    // get user token
     const token = await userCredential?.user?.getIdToken();
 
-    // create response with user data and token
+    // create response
     const response = NextResponse.json(
       {
         user: {
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
 
-    // set httpOnly cookie here, to be later used for authentication in middleware
+    // set httpOnly cookie, to be later used for authentication in middleware
     response?.cookies?.set({
       name: "auth-token",
       value: token,
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Login error:", error);
-    // handle specific Firebase errors
+    // handle specific firebase errors
     let errorMessage = "Failed to sign in";
     if (error.code === "auth/user-not-found") {
       errorMessage = "No user found with this email";
