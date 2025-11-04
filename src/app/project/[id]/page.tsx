@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useTransition } from "react";
 import {
   Container,
   Box,
@@ -53,6 +53,8 @@ const ProjectPage = () => {
     handleUpdateTaskStatus,
     handleDeleteTaskAlert,
   } = useProjectDetails(projectId);
+
+  const [loadingTransition, startTransition] = useTransition();
 
   // only show loading if project is not fetched yet and loading is true
   if (!project && loading?.fetchLoading) {
@@ -115,9 +117,12 @@ const ProjectPage = () => {
         {/* Header */}
         <Box sx={{ mb: 4 }}>
           <Button
-            startIcon={<ArrowBack />}
-            onClick={() => router.push("/dashboard")}
+            startIcon={
+              loadingTransition ? <CircularProgress size={20} /> : <ArrowBack />
+            }
+            onClick={() => startTransition(() => router.push("/dashboard"))}
             sx={{ mb: 2 }}
+            disabled={loadingTransition}
           >
             Back to Dashboard
           </Button>

@@ -82,7 +82,7 @@ export default function DashboardPage() {
         </Card>
 
         <Typography variant="h5" component="h2" sx={{ mb: 3 }}>
-          Your Projects
+          Your Projects ({projects?.length ?? ""})
         </Typography>
 
         {projects && projects?.length > 0 ? (
@@ -102,24 +102,29 @@ export default function DashboardPage() {
                   }}
                   // onClick={() => router.push(`/project/${project?.id}`)}
                 >
-                  <CardContent title="Click to view project tasks">
-                    <Box className="flex items-baseline justify-between">
-                      <Typography variant="h6" component="h3" gutterBottom>
-                        {project?.projectName || "N/A"}
-                      </Typography>
+                  <CardContent
+                    title="Click to view project tasks"
+                    className="flex flex-col justify-between h-full"
+                  >
+                    <Box className="flex flex-col justify-start h-full">
+                      <Box className="flex items-baseline justify-between">
+                        <Typography variant="h6" component="h3" gutterBottom>
+                          {project?.projectName || "N/A"}
+                        </Typography>
 
-                      <Typography variant="caption" color="text.secondary">
-                        Total Tasks: {project?.totalTasks || 0}
+                        <Typography variant="caption" color="text.secondary">
+                          Total Tasks: {project?.totalTasks || 0}
+                        </Typography>
+                      </Box>
+
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ mb: 2 }}
+                      >
+                        {project?.description || "N/A"}
                       </Typography>
                     </Box>
-
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ mb: 2 }}
-                    >
-                      {project?.description || "N/A"}
-                    </Typography>
 
                     <Box
                       sx={{

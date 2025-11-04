@@ -107,6 +107,13 @@ const useDashboard = () => {
               if (!newFormFields?.[key]?.trim()?.length) {
                 newErrors.description = "*Description is required";
                 isFormValid = false;
+              } else if (
+                newFormFields?.[key]?.trim()?.length < 2 ||
+                newFormFields?.[key]?.trim()?.length > 200
+              ) {
+                newErrors.description =
+                  "*Description must be between 2 and 200 characters";
+                isFormValid = false;
               } else {
                 newErrors.description = null;
                 newIsDirty[key] = false;
