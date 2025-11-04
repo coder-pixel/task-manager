@@ -1,11 +1,16 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+export enum TaskStatusEnum {
+  TODO = "Todo",
+  IN_PROGRESS = "In Progress",
+  DONE = "Done",
+}
 export interface Task {
   id: string;
   title: string;
   dueDate?: string;
-  status: string;
+  status: TaskStatusEnum;
   createdAt: string;
 }
 
