@@ -9,7 +9,7 @@ import {
 } from "firebase/firestore";
 import { Task } from "@/store/projectStore";
 
-// POST - Add a new task to a project
+// POST - Add task to a project
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -18,7 +18,6 @@ export async function POST(
     const { title, dueDate, status } = await request.json();
     const projectId = params?.id;
 
-    // Validate input
     if (!title || !status) {
       return NextResponse.json(
         { error: "Title and status are required" },
@@ -26,7 +25,7 @@ export async function POST(
       );
     }
 
-    // Get user ID from auth header
+    // get user id
     const authHeader = request?.headers?.get("authorization");
     const userId = authHeader?.split("Bearer ")[1];
 
@@ -37,7 +36,7 @@ export async function POST(
       );
     }
 
-    // Get the project to verify ownership
+    // get the project to verify ownership
     const projectRef = doc(db, "projects", projectId);
     const projectSnap = await getDoc(projectRef);
 
@@ -53,7 +52,7 @@ export async function POST(
       );
     }
 
-    // Create new task
+    // create task
     const newTask = {
       id: `task_${Date.now()}_${Math.random()?.toString(36)?.substring(2, 9)}`,
       title: title?.trim(),
@@ -62,7 +61,7 @@ export async function POST(
       createdAt: new Date().toISOString(),
     };
 
-    // Add task to project's tasks array
+    // update project with new task
     await updateDoc(projectRef, {
       tasks: arrayUnion(newTask),
     });
@@ -81,7 +80,7 @@ export async function POST(
   }
 }
 
-// PATCH - Update task
+// PATCH - Update task details
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -90,7 +89,7 @@ export async function PATCH(
     const { taskId, status, title, dueDate } = await request.json();
     const projectId = params?.id;
 
-    // Validate input
+    // validate input
     if (!taskId) {
       return NextResponse.json(
         { error: "Task ID is required" },
@@ -98,7 +97,6 @@ export async function PATCH(
       );
     }
 
-    // Get user ID from auth header
     const authHeader = request?.headers?.get("authorization");
     const userId = authHeader?.split("Bearer ")[1];
 
@@ -109,7 +107,7 @@ export async function PATCH(
       );
     }
 
-    // Get the project
+    // get the project
     const projectRef = doc(db, "projects", projectId);
     const projectSnap = await getDoc(projectRef);
 
@@ -125,7 +123,7 @@ export async function PATCH(
       );
     }
 
-    // Get current tasks and update the specific task
+    // get and update the specific task
     const tasks = projectData?.tasks || [];
     const taskIndex = tasks?.findIndex((t: Task) => t?.id === taskId);
 
@@ -133,7 +131,6 @@ export async function PATCH(
       return NextResponse.json({ error: "Task not found" }, { status: 404 });
     }
 
-    // Update task properties
     const updatedTask = {
       ...tasks?.[taskIndex],
       ...(status !== undefined && { status: status?.trim() }),
@@ -143,7 +140,7 @@ export async function PATCH(
 
     tasks[taskIndex] = updatedTask;
 
-    // Update the project document
+    // update the project document
     await updateDoc(projectRef, {
       tasks: tasks,
     });
@@ -163,17 +160,16 @@ export async function PATCH(
   }
 }
 
-// DELETE - Delete a task
+// DELETE - Delete task
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(request?.url);
     const taskId = searchParams?.get("taskId");
     const projectId = params?.id;
 
-    // Validate input
     if (!taskId) {
       return NextResponse.json(
         { error: "Task ID is required" },
@@ -181,7 +177,7 @@ export async function DELETE(
       );
     }
 
-    // Get user ID from auth header
+    // get user id
     const authHeader = request?.headers?.get("authorization");
     const userId = authHeader?.split("Bearer ")[1];
 
@@ -192,7 +188,7 @@ export async function DELETE(
       );
     }
 
-    // Get the project
+    // get the project
     const projectRef = doc(db, "projects", projectId);
     const projectSnap = await getDoc(projectRef);
 
@@ -208,7 +204,7 @@ export async function DELETE(
       );
     }
 
-    // Get current tasks and remove the specific task
+    // get and remove the specific task
     const tasks = projectData?.tasks || [];
     const taskToDelete =
       tasks?.find((t: Task) => t?.id === taskId) ?? undefined;
@@ -217,7 +213,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Task not found" }, { status: 404 });
     }
 
-    // Remove task from array
+    // remove task from array
     await updateDoc(projectRef, {
       tasks: arrayRemove(taskToDelete),
     });
