@@ -1,10 +1,21 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Container, Box, Button, Typography, Stack } from "@mui/material";
+import {
+  Container,
+  Box,
+  Button,
+  Typography,
+  Stack,
+  CircularProgress,
+} from "@mui/material";
+import { useTransition } from "react";
 
 export default function Home() {
   const router = useRouter();
+
+  const [loadingLoginTransition, startLoginTransition] = useTransition();
+  const [loadingRegisterTransition, startRegisterTransition] = useTransition();
 
   return (
     <Container maxWidth="md">
@@ -31,20 +42,30 @@ export default function Home() {
             variant="contained"
             color="primary"
             size="large"
-            onClick={() => router.push("/login")}
+            onClick={() => startLoginTransition(() => router.push("/login"))}
             className="px-4 py-1.5"
+            disabled={loadingLoginTransition}
           >
             Sign In
+            {loadingLoginTransition ? (
+              <CircularProgress size={16} className="ml-2 text-white" />
+            ) : null}
           </Button>
 
           <Button
             variant="outlined"
             color="primary"
             size="large"
-            onClick={() => router.push("/register")}
+            onClick={() =>
+              startRegisterTransition(() => router.push("/register"))
+            }
             className="px-4 py-1.5"
+            disabled={loadingRegisterTransition}
           >
             Sign Up
+            {loadingRegisterTransition ? (
+              <CircularProgress size={16} className="ml-2 text-white" />
+            ) : null}
           </Button>
         </Stack>
       </Box>
