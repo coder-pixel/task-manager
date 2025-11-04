@@ -8,11 +8,13 @@ import {
   Typography,
   Button,
   Grid,
+  CircularProgress,
 } from "@mui/material";
 import { capitalizeFirstLetter } from "../../helper-methods";
 import useDashboard from "@/hooks/useDashboard";
 import AddProjectModal from "@/Components/Dashboard/AddProjectModal";
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -29,6 +31,8 @@ export default function DashboardPage() {
     handleProjectFormChange,
     handleCreateProject,
   } = useDashboard();
+
+  const [loadingTransition, startTransition] = useTransition();
 
   if (!user) {
     return null;
@@ -88,20 +92,27 @@ export default function DashboardPage() {
                 <Card
                   sx={{
                     height: "100%",
+                    borderRadius: "10px",
                     transition: "box-shadow 0.2s, transform 0.2s",
-                    cursor: "pointer",
                     boxShadow: 2,
                     "&:hover": {
                       boxShadow: 8,
                       transform: "translateY(-4px) scale(1.03)",
                     },
                   }}
-                  onClick={() => router.push(`/project/${project?.id}`)}
+                  // onClick={() => router.push(`/project/${project?.id}`)}
                 >
                   <CardContent title="Click to view project tasks">
-                    <Typography variant="h6" component="h3" gutterBottom>
-                      {project?.projectName || "N/A"}
-                    </Typography>
+                    <Box className="flex items-baseline justify-between">
+                      <Typography variant="h6" component="h3" gutterBottom>
+                        {project?.projectName || "N/A"}
+                      </Typography>
+
+                      <Typography variant="caption" color="text.secondary">
+                        Total Tasks: {project?.totalTasks || 0}
+                      </Typography>
+                    </Box>
+
                     <Typography
                       variant="body2"
                       color="text.secondary"
@@ -113,7 +124,8 @@ export default function DashboardPage() {
                     <Box
                       sx={{
                         display: "flex",
-                        justifyContent: "space-between",
+                        justifyContent: "space-between ",
+                        alignItems: "baseline",
                       }}
                     >
                       <Typography variant="caption" color="text.secondary">
@@ -121,9 +133,22 @@ export default function DashboardPage() {
                         {new Date(project?.createdAt)?.toLocaleDateString()}
                       </Typography>
 
-                      <Typography variant="caption" color="text.secondary">
-                        Total Tasks: {project?.totalTasks || 0}
-                      </Typography>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() =>
+                          startTransition(() =>
+                            router.push(`/project/${project?.id}`)
+                          )
+                        }
+                        className="p-0 text-primary"
+                        disabled={loadingTransition}
+                      >
+                        Manage Tasks{" "}
+                        {loadingTransition ? (
+                          <CircularProgress size={20} className="ml-2" />
+                        ) : null}
+                      </Button>
                     </Box>
                   </CardContent>
                 </Card>

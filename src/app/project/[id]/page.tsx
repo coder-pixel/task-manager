@@ -54,7 +54,8 @@ const ProjectPage = () => {
     handleDeleteTaskAlert,
   } = useProjectDetails(projectId);
 
-  if (loading?.fetchLoading) {
+  // only show loading if project is not fetched yet and loading is true
+  if (!project && loading?.fetchLoading) {
     return (
       <Container maxWidth="lg">
         <Box
@@ -71,7 +72,7 @@ const ProjectPage = () => {
     );
   }
 
-  if (!project) {
+  if (!project && !loading?.fetchLoading) {
     return (
       <Container maxWidth="lg">
         <Box sx={{ py: 8 }}>
@@ -128,25 +129,33 @@ const ProjectPage = () => {
             }}
           >
             <Box>
-              <Typography variant="h4" component="h1" gutterBottom>
-                {project?.projectName || "N/A"}
-              </Typography>
+              <Box className="flex items-baseline justify-between">
+                <Typography variant="h4" component="h1" gutterBottom>
+                  {project?.projectName || "N/A"}
+                </Typography>
+
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className="w-[200px]"
+                  startIcon={<Add />}
+                  onClick={() => toggleAddTaskDialog(true, null)}
+                  disabled={loading?.submitLoading}
+                >
+                  Add Task
+                </Button>
+              </Box>
+
               <Typography variant="body1" color="text.secondary" gutterBottom>
                 {project?.description || "N/A"}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                Created: {new Date(project?.createdAt).toLocaleDateString()}
+                Created:{" "}
+                {project?.createdAt
+                  ? new Date(project?.createdAt).toLocaleDateString()
+                  : "N/A"}
               </Typography>
             </Box>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<Add />}
-              onClick={() => toggleAddTaskDialog(true, null)}
-              disabled={loading?.submitLoading}
-            >
-              Add Task
-            </Button>
           </Box>
         </Box>
 
