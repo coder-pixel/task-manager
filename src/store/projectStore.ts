@@ -21,6 +21,7 @@ export interface Project {
   createdAt: string;
   userId: string;
   tasks: Task[];
+  totalTasks: number;
 }
 
 interface ProjectState {

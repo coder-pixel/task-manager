@@ -98,21 +98,33 @@ export default function DashboardPage() {
                   }}
                   onClick={() => router.push(`/project/${project?.id}`)}
                 >
-                  <CardContent>
+                  <CardContent title="Click to view project tasks">
                     <Typography variant="h6" component="h3" gutterBottom>
-                      {project.projectName}
+                      {project?.projectName || "N/A"}
                     </Typography>
                     <Typography
                       variant="body2"
                       color="text.secondary"
                       sx={{ mb: 2 }}
                     >
-                      {project.description}
+                      {project?.description || "N/A"}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      Created:{" "}
-                      {new Date(project?.createdAt)?.toLocaleDateString()}
-                    </Typography>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Typography variant="caption" color="text.secondary">
+                        Created:{" "}
+                        {new Date(project?.createdAt)?.toLocaleDateString()}
+                      </Typography>
+
+                      <Typography variant="caption" color="text.secondary">
+                        Total Tasks: {project?.totalTasks || 0}
+                      </Typography>
+                    </Box>
                   </CardContent>
                 </Card>
               </Grid>

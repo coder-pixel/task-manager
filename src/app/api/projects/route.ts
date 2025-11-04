@@ -38,6 +38,7 @@ export async function GET(request: NextRequest) {
         id: doc?.id,
         ...data,
         tasks: data?.tasks || [], // Ensure tasks array is always present
+        totalTasks: data?.tasks?.length || 0,
       };
     });
 
