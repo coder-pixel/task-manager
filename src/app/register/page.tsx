@@ -1,7 +1,5 @@
 "use client";
 
-import { useState, FormEvent } from "react";
-import { useRouter } from "next/navigation";
 import {
   Container,
   Box,
@@ -10,150 +8,39 @@ import {
   TextField,
   Button,
   Typography,
-  Link,
   CircularProgress,
+  IconButton,
 } from "@mui/material";
-import { REGEX_CONFIG } from "../Config/RegexConfig";
-import { errorToast, successToast } from "../helper-methods/Toaster";
-
-const initialFormFields = {
-  email: "",
-  password: "",
-  confirmPassword: "",
-};
-const initialIsDirty = {
-  email: false,
-  password: false,
-  confirmPassword: false,
-};
-const initialErrors = {
-  email: null as string | null,
-  password: null as string | null,
-  confirmPassword: null as string | null,
-};
-
-type FormFields = typeof initialFormFields;
-type IsDirty = typeof initialIsDirty;
-type Errors = typeof initialErrors;
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import useRegister from "@/hooks/useRegister";
+import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const router = useRouter();
 
-  const [formFields, setFormFields] = useState<FormFields>(initialFormFields);
-  const [isDirty, setIsDirty] = useState<IsDirty>(initialIsDirty);
-  const [errors, setErrors] = useState<Errors>(initialErrors);
+  const { formFields, errors, loading, handleOnChange, handleSubmit } =
+    useRegister();
 
-  const [loading, setLoading] = useState(false);
-
-  const _handleOnChange = (key: keyof FormFields, value: string) => {
-    const newFormFields = { ...formFields, [key]: value };
-    const newIsDirty = { ...isDirty, [key]: true };
-
-    setFormFields(newFormFields);
-    setIsDirty(newIsDirty);
-
-    _validateFormFields({ newFormFields, newIsDirty });
-  };
-
-  const _validateFormFields = ({
-    newFormFields,
-    newIsDirty,
-  }: {
-    newFormFields: FormFields;
-    newIsDirty: IsDirty;
-  }) => {
-    return new Promise((resolve) => {
-      const newErrors = { ...errors };
-      let isFormValid = true;
-
-      Object.keys(newFormFields)?.forEach((key: string) => {
-        if (newIsDirty[key as keyof IsDirty]) {
-          switch (key) {
-            case "email":
-              if (!newFormFields[key]?.trim()?.length) {
-                newErrors[key] = "*Email is required";
-                isFormValid = false;
-              } else if (!REGEX_CONFIG?.email?.test(newFormFields?.[key])) {
-                newErrors[key] = "*Invalid email";
-                isFormValid = false;
-              } else {
-                newErrors[key] = null;
-                newIsDirty[key] = false;
-              }
-              break;
-
-            case "password":
-              if (!newFormFields?.[key]?.trim()?.length) {
-                newErrors[key] = "*Password is required";
-                isFormValid = false;
-              } else if (!REGEX_CONFIG?.password?.test(newFormFields[key])) {
-                newErrors[key] = "*Invalid password";
-                isFormValid = false;
-              } else {
-                newErrors[key] = null;
-                newIsDirty[key] = false;
-              }
-              break;
-
-            case "confirmPassword":
-              if (!newFormFields?.[key]?.trim()?.length) {
-                newErrors[key] = "*Confirm password is required";
-                isFormValid = false;
-              } else if (newFormFields?.[key] !== newFormFields?.["password"]) {
-                newErrors[key] = "*Passwords do not match";
-                isFormValid = false;
-              } else {
-                newErrors[key] = null;
-                newIsDirty[key] = false;
-              }
-              break;
-            default:
-              break;
-          }
-        }
-      });
-
-      setErrors(newErrors);
-      setIsDirty(newIsDirty);
-
-      resolve(isFormValid);
-    });
-  };
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    try {
-      if (e) e.preventDefault();
-      setLoading(true);
-
-      const newFormFields = { ...formFields };
-      const newIsDirty = { ...isDirty };
-
-      const isFormValid = await _validateFormFields({
-        newFormFields,
-        newIsDirty,
-      });
-
-      // return if form not valid
-      if (!isFormValid) return;
-
-      // sign up api call: TODO
-
-      successToast("Registered Successfully");
-
-      // redirect to dashboard
-      router.push("/dashboard");
-    } catch (err) {
-      errorToast(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [loadingTransition, startTransition] = useTransition();
 
   return (
     <Container maxWidth="sm">
       <Box className="min-h-screen flex items-center justify-center py-4">
         <Card sx={{ width: "100%", boxShadow: 3 }}>
           <CardContent sx={{ p: 4 }}>
+            <Box sx={{ mb: 2 }}>
+              <IconButton
+                onClick={() => router.push("/")}
+                size="small"
+                sx={{ color: "text.secondary" }}
+                aria-label="back to home"
+                title="Back to home"
+              >
+                <ArrowBackIcon />
+              </IconButton>
+            </Box>
+
             <Typography
               variant="h4"
               component="h1"
@@ -177,11 +64,10 @@ export default function RegisterPage() {
               <TextField
                 fullWidth
                 label="Email"
-                type="email"
+                type="text"
                 value={formFields?.email}
-                onChange={(e) => _handleOnChange("email", e.target.value)}
+                onChange={(e) => handleOnChange("email", e.target.value)}
                 margin="normal"
-                required
                 autoComplete="email"
                 autoFocus
               />
@@ -201,9 +87,8 @@ export default function RegisterPage() {
                 label="Password"
                 type="password"
                 value={formFields?.password}
-                onChange={(e) => _handleOnChange("password", e.target.value)}
+                onChange={(e) => handleOnChange("password", e.target.value)}
                 margin="normal"
-                required
                 autoComplete="new-password"
                 // helperText="Must be at least 6 characters"
               />
@@ -224,10 +109,9 @@ export default function RegisterPage() {
                 type="password"
                 value={formFields?.confirmPassword}
                 onChange={(e) =>
-                  _handleOnChange("confirmPassword", e.target.value)
+                  handleOnChange("confirmPassword", e.target.value)
                 }
                 margin="normal"
-                required
                 autoComplete="new-password"
               />
               {errors?.confirmPassword && (
@@ -247,20 +131,33 @@ export default function RegisterPage() {
                 variant="contained"
                 size="large"
                 sx={{ mt: 3, mb: 2, py: 1.5 }}
+                disabled={loading}
               >
-                {loading ? <CircularProgress size={24} /> : "Sign Up"}
+                Sign Up{" "}
+                {loading ? (
+                  <CircularProgress size={16} className="ml-2 text-white" />
+                ) : null}
               </Button>
 
               <Box sx={{ textAlign: "center", mt: 2 }}>
                 <Typography variant="body2" color="text.secondary">
                   Already have an account?{" "}
-                  <Link
-                    href="/login"
-                    underline="hover"
-                    sx={{ cursor: "pointer", fontWeight: "medium" }}
+                  <Button
+                    variant="text"
+                    size="small"
+                    onClick={() =>
+                      startTransition(() => {
+                        router.push("/login");
+                      })
+                    }
+                    disabled={loadingTransition}
+                    className="font-medium cursor-pointer text-primary"
                   >
                     Sign in
-                  </Link>
+                    {loadingTransition ? (
+                      <CircularProgress size={16} className="ml-2 text-white" />
+                    ) : null}
+                  </Button>
                 </Typography>
               </Box>
             </Box>

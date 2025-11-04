@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import ToasterWrapper from "./Components/Shared/ToastWrapper";
+import ToasterWrapper from "../Components/Shared/ToastWrapper";
 
 export const metadata: Metadata = {
   title: "Create Next App",
